@@ -284,6 +284,16 @@ section{position:relative}
 .channels a,.channels div{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);text-decoration:none;font-size:15px}
 .channels a:hover{color:var(--gold)}
 
+.direct{display:grid;gap:0;border-top:1px solid var(--line)}
+.dline{display:grid;gap:10px;padding:clamp(24px,3vw,40px) 0;border-bottom:1px solid var(--line);text-decoration:none;transition:padding .5s var(--ease),background .5s}
+.dline:hover{padding-left:14px;background:linear-gradient(90deg,rgba(200,185,154,.06),transparent 60%)}
+.dbig{font:400 clamp(32px,4.4vw,64px)/1 var(--f-display);letter-spacing:-.015em;display:flex;align-items:center;gap:18px;transition:color .3s}
+.dbig svg{width:.6em;height:.6em;flex:none;color:var(--gold)}
+.dline:hover .dbig{color:var(--gold)}
+.dline .mono{color:var(--mute)}
+.dnum{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:24px 0;border-bottom:1px solid var(--line)}
+.num{font:500 clamp(18px,1.8vw,24px)/1 var(--f-mono);letter-spacing:.06em;user-select:all;font-variant-numeric:tabular-nums}
+.btn svg{flex:none}
 /* footer */
 .foot{padding-top:clamp(72px,9vw,140px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 32px)}
 .foot-big{font:400 clamp(56px,13vw,220px)/.86 var(--f-display);letter-spacing:-.035em;margin:0}
@@ -432,11 +442,11 @@ const SITE = {
   ],
   credits: [],   // verified collaborators / production credits only. Empty = section hidden.
   contact: {
-    email: "",                 // e.g. "hello@mahmoudammar.com"
-    formEndpoint: "",          // e.g. "https://formspree.io/f/xxxxxxx" (POST, JSON response)
-    projectTypes: ["Commercial","Brand film","Event film","Social / vertical series","Documentary","Short film","Music video","Wedding film","Other"],
-    budgets: ["Under SAR 10k","SAR 10k – 25k","SAR 25k – 50k","SAR 50k – 100k","SAR 100k+","Not sure yet"],
-    timelines: ["As soon as possible","Within a month","1 – 3 months","3+ months","Flexible"]
+    phone: "966537426669",                 // calls (international format, no +)
+    whatsapp: "966537426669",              // WhatsApp number (same format)
+    phoneDisplay: "+966 53 742 6669",
+    waMessage: "مرحبًا محمود، شفت أعمالك على موقعك وحاب أتكلم معك عن مشروع.",
+    email: ""                              // optional
   },
   // Only filled-in links are shown.
   social: [
@@ -650,37 +660,38 @@ function home(){
 }
 
 /* ---------- CONTACT ---------- */
+const WA_ICON='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.4-.3Z"/></svg>';
+const CALL_ICON='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></svg>';
+const waLink = () => `https://wa.me/${SITE.contact.whatsapp}?text=${encodeURIComponent(SITE.contact.waMessage)}`;
+const telLink = () => `tel:+${SITE.contact.phone}`;
 function contact(){
   const c = SITE.contact, links = SITE.social.filter(s=>s.url);
-  const opt = a => a.map(x=>`<option>${esc(x)}</option>`).join("");
   return `<section class="contact sec" id="contact" aria-labelledby="ct-h"><div class="wrap ct-grid">
     <div class="ct-intro">
       <p class="eyebrow">06 — Contact</p>
       <h2 class="h2" id="ct-h">Have a Story <em>to Tell?</em></h2>
       <p class="lede">Let's turn your next idea into something worth watching.</p>
-      <div class="ctas"><a class="btn solid" href="#cform">Start a project <span class="arr" aria-hidden="true">→</span></a>${c.email?`<a class="btn" href="mailto:${esc(c.email)}">Get in touch</a>`:""}</div>
-      <div class="channels">
-        ${c.email?`<div><span class="eyebrow">Email</span><span style="user-select:all">${esc(c.email)}</span></div>`:""}
-        ${links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener"><span class="eyebrow">${esc(l.label)}</span><span>↗</span></a>`).join("")}
-      </div>
-      ${(!c.email||!links.length)?ed("Add Mahmoud’s email and the social profiles he uses in SITE.contact and SITE.social. Empty ones stay hidden."):""}
     </div>
     <div class="ct-form">
-      <form class="form" id="cform" novalidate>
-        <div class="fld"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required maxlength="120"><span class="err" id="e-name"></span></div>
-        <div class="fld"><label for="f-email">Email address</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"><span class="err" id="e-email"></span></div>
-        <div class="fld"><label for="f-company">Company or brand <small>(optional)</small></label><input id="f-company" name="company" autocomplete="organization" maxlength="160"></div>
-        <div class="fld"><label for="f-type">Project type</label><select id="f-type" name="project_type" required><option value="">Choose one</option>${opt(c.projectTypes)}</select><span class="err" id="e-type"></span></div>
-        <div class="fld"><label for="f-budget">Estimated budget <small>(optional)</small></label><select id="f-budget" name="budget"><option value="">Prefer not to say</option>${opt(c.budgets)}</select></div>
-        <div class="fld"><label for="f-time">Timeline <small>(optional)</small></label><select id="f-time" name="timeline"><option value="">Not decided</option>${opt(c.timelines)}</select></div>
-        <div class="fld full"><label for="f-msg">Project details</label><textarea id="f-msg" name="message" required maxlength="4000" placeholder="What are you making, who is it for, and where will it be seen?"></textarea><span class="err" id="e-msg"></span></div>
-        <div class="hp" aria-hidden="true"><label for="f-gotcha">Leave this empty</label><input id="f-gotcha" name="_gotcha" tabindex="-1" autocomplete="off"></div>
-        <label class="consent" for="f-ok"><input type="checkbox" id="f-ok" name="consent" required><span>I agree that my details are used only to reply to this enquiry. They are not shared or added to any mailing list.</span></label>
-        <span class="err fld" id="e-ok" style="grid-column:1/-1;color:var(--err);font-size:12.5px"></span>
-        <div class="status" id="fstatus" role="status" aria-live="polite" hidden></div>
-        <div class="form-foot"><button class="btn solid" type="submit" id="fsubmit">Send enquiry <span class="arr" aria-hidden="true">→</span></button><span class="mono" style="color:var(--mute)">Replies usually within two working days</span></div>
-        ${!c.formEndpoint?`<div style="grid-column:1/-1">${ed("The form is not connected yet. Create a free Formspree (or Basin / Getform) form, paste its endpoint into SITE.contact.formEndpoint, and enquiries will arrive by email.")}</div>`:""}
-      </form>
+      <div class="direct">
+        <a class="dline rv" href="${waLink()}" target="_blank" rel="noopener">
+          <span class="eyebrow">01 — WhatsApp</span>
+          <span class="dbig">Message on WhatsApp ${WA_ICON}</span>
+          <span class="mono">Send a message, voice note or references</span>
+        </a>
+        <a class="dline rv" href="${telLink()}">
+          <span class="eyebrow">02 — Call</span>
+          <span class="dbig">Call directly ${CALL_ICON}</span>
+          <span class="mono">Tap to call from your phone</span>
+        </a>
+        <div class="dnum">
+          <span class="eyebrow">Number</span>
+          <span class="num" dir="ltr">${esc(c.phoneDisplay)}</span>
+          <button class="ctl" id="copyNum" type="button">COPY NUMBER</button>
+        </div>
+        <div class="ctas" style="margin-top:8px"><a class="btn solid" href="${waLink()}" target="_blank" rel="noopener">Start a project ${WA_ICON}</a><a class="btn" href="${telLink()}">Get in touch ${CALL_ICON}</a></div>
+        ${c.email||links.length?`<div class="channels">${c.email?`<div><span class="eyebrow">Email</span><span style="user-select:all">${esc(c.email)}</span></div>`:""}${links.map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener"><span class="eyebrow">${esc(l.label)}</span><span>↗</span></a>`).join("")}</div>`:""}
+      </div>
     </div>
   </div></section>`;
 }
@@ -754,7 +765,7 @@ function footer(){
       <div style="display:grid;gap:10px"><p class="eyebrow">${SITE.roles.map(esc).join(" · ")}</p><p class="closing">Made with intention. Framed with purpose.</p></div>
       <ul><li><a href="#work">Work</a></li><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#contact">Contact</a></li><li><a href="#archive">All projects</a></li></ul>
       ${links.length?`<ul>${links.map(l=>`<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a></li>`).join("")}</ul>`:""}
-      <a class="btn" href="#contact">Start a project <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn" href="${waLink()}" target="_blank" rel="noopener">WhatsApp ${WA_ICON}</a>
     </div>
     <div class="foot-row" style="border:0;margin-top:20px;padding-top:0"><p class="mono" style="color:var(--mute-2)">© ${new Date().getFullYear()} ${esc(SITE.name)}. All films and stills © their respective owners.</p><a class="mono" href="#top" style="color:var(--mute)">Back to top ↑</a></div>`;
 }
@@ -800,38 +811,11 @@ function wire(){
   // archive filters
   document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ $("#main").innerHTML=`<div class="view">${archive(c.dataset.f)}</div>`; wire(); });
   // form
-  const form = $("#cform"); if(form) wireForm(form);
-}
-
-function wireForm(form){
-  const t0 = Date.now();
-  const st = $("#fstatus"), sub = $("#fsubmit");
-  const show = (cls,msg) => { st.hidden=false; st.className="status "+cls; st.innerHTML=msg; };
-  const rules = [
-    ["f-name","e-name",v=>v.trim().length>=2||"Enter your full name."],
-    ["f-email","e-email",v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())||"Enter an email address like name@company.com."],
-    ["f-type","e-type",v=>!!v||"Choose the kind of project."],
-    ["f-msg","e-msg",v=>v.trim().length>=20||"Tell us a little more — at least a couple of sentences."]
-  ];
-  const check = (r) => { const el=$("#"+r[0]); const res=r[2](el.value); const ok=res===true; el.closest(".fld").classList.toggle("bad",!ok); $("#"+r[1]).textContent=ok?"":res; el.setAttribute("aria-invalid",String(!ok)); return ok; };
-  rules.forEach(r=>{ const el=$("#"+r[0]); el.setAttribute("aria-describedby",r[1]); el.addEventListener("blur",()=>{ if(el.value) check(r); }); el.addEventListener("input",()=>{ if(el.closest(".fld").classList.contains("bad")) check(r); }); });
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    const okAll = rules.map(check).every(Boolean);
-    const consent = $("#f-ok").checked; $("#e-ok").textContent = consent?"":"Please tick the box so we can reply to you.";
-    if(!okAll || !consent){ const first=form.querySelector(".bad input,.bad select,.bad textarea")||(!consent&&$("#f-ok")); first&&first.focus(); return; }
-    if($("#f-gotcha").value || Date.now()-t0<3000){ show("err","That was very fast. Please wait a moment and send again."); return; }
-    const ep = SITE.contact.formEndpoint;
-    const fallback = SITE.contact.email ? ` You can email <span style="user-select:all">${esc(SITE.contact.email)}</span> directly.` : "";
-    if(!ep){ show("err","Your message was not sent: this form isn’t connected to an inbox yet."+fallback); return; }
-    sub.disabled=true; sub.firstChild.textContent="Sending… ";
-    try{
-      const res = await fetch(ep,{method:"POST",body:new FormData(form),headers:{Accept:"application/json"}});
-      if(!res.ok) throw new Error(res.status);
-      form.reset(); show("ok","Thank you — your enquiry was received. Expect a reply within two working days.");
-    }catch(err){
-      show("err","Your message couldn’t be sent. Check your connection and try again."+fallback);
-    }finally{ sub.disabled=false; sub.firstChild.textContent="Send enquiry "; }
+  document.querySelectorAll("#copyNum").forEach(b=>b.onclick=async()=>{
+    const n=SITE.contact.phoneDisplay;
+    try{ await navigator.clipboard.writeText(n); b.textContent="COPIED"; }
+    catch(e){ const r=document.createRange(); r.selectNodeContents(document.querySelector(".num")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent="SELECTED — PRESS COPY"; }
+    setTimeout(()=>b.textContent="COPY NUMBER",2200);
   });
 }
 
